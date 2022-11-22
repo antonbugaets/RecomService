@@ -72,6 +72,16 @@ recommendations_example = {
 @router.get(
     path="/health",
     tags=["Health"],
+    responses={
+        401: {
+            "model": List[Error],
+            "content": {
+                "application/json": {
+                    "examples": unauthorized_examples,
+                },
+            },
+        },
+    },
 )
 async def health(api_key: str = Depends(oauth2_scheme)) -> str:
     return "I am alive"
