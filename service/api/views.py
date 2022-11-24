@@ -1,13 +1,18 @@
-from http import HTTPStatus
-from typing import List
+from typing import List, Optional
 
-from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import APIRouter, Depends, FastAPI, Request, Security
+from fastapi.security.api_key import APIKeyHeader
 from pydantic import BaseModel
 
-from service.api.exceptions import UserNotFoundError, WrongModelNameError
+from service.api.exceptions import (
+    InvalidApiKey,
+    MissingApiKey,
+    UserNotFoundError,
+    WrongModelNameError,
+)
 from service.log import app_logger
 from service.models import Error
+from service.settings import ServiceConfig, get_config
 
 
 class RecoResponse(BaseModel):
@@ -15,27 +20,38 @@ class RecoResponse(BaseModel):
     items: List[int]
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+api_key_header = APIKeyHeader(name="Authorization", auto_error=False)
+
+
+async def get_api_key(
+    api_key: Optional[str] = Security(api_key_header),
+    service_config: ServiceConfig = Depends(get_config),
+) -> str:
+    if api_key is None:
+        raise MissingApiKey()
+    if api_key == service_config.api_key:
+        return api_key
+    raise InvalidApiKey()
 
 
 router = APIRouter()
 
 
 unauthorized_examples = {
-    "Missing api key header": {
+    "Missing api key": {
         "value": [
             {
-                "error_key": "http_exception",
-                "error_message": "Not authenticated",
+                "error_key": "missing_api_key",
+                "error_message": "Missing header with api key",
                 "error_loc": None,
             },
         ],
     },
-    "Wrong api key": {
+    "Invalid api key": {
         "value": [
             {
-                "error_key": "http_exception",
-                "error_message": "Wrong api key",
+                "error_key": "invalid_api_key",
+                "error_message": "Invalid api key",
                 "error_loc": None,
             },
         ],
@@ -83,7 +99,7 @@ recommendations_example = {
         },
     },
 )
-async def health(api_key: str = Depends(oauth2_scheme)) -> str:
+async def health(api_key: str = Depends(get_api_key)) -> str:
     return "I am alive"
 
 
@@ -122,17 +138,9 @@ async def get_reco(
     request: Request,
     model_name: str,
     user_id: int,
-    api_key: str = Depends(oauth2_scheme),
+    api_key: str = Depends(get_api_key),
 ) -> RecoResponse:
     app_logger.info(f"Request for model: {model_name}, user_id: {user_id}")
-
-    # Write your code here
-
-    if api_key != request.app.state.api_key:
-        raise HTTPException(
-            status_code=HTTPStatus.UNAUTHORIZED,
-            detail="Wrong api key",
-        )
 
     if user_id > 10**9:
         raise UserNotFoundError(error_message=f"User {user_id} not found")
