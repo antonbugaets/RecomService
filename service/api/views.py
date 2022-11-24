@@ -84,20 +84,38 @@ recommendations_example = {
   "items": list(range(10)),
 }
 
+unauthorized_response = {
+    "model": List[Error],
+    "content": {
+        "application/json": {
+            "examples": unauthorized_examples,
+        },
+    },
+}
+
+not_found_response = {
+    "model": List[Error],
+    "content": {
+        "application/json": {
+            "examples": not_found_examples,
+        },
+    },
+}
+
+recommendations_response = {
+    "description": "Recommendations for user",
+    "content": {
+        "application/json": {
+            "example": recommendations_example,
+        },
+    },
+}
+
 
 @router.get(
     path="/health",
     tags=["Health"],
-    responses={
-        401: {
-            "model": List[Error],
-            "content": {
-                "application/json": {
-                    "examples": unauthorized_examples,
-                },
-            },
-        },
-    },
+    responses={401: unauthorized_response},
 )
 async def health(api_key: str = Depends(get_api_key)) -> str:
     return "I am alive"
@@ -108,30 +126,9 @@ async def health(api_key: str = Depends(get_api_key)) -> str:
     tags=["Recommendations"],
     response_model=RecoResponse,
     responses={
-        200: {
-            "description": "Recommendations for user",
-            "content": {
-                "application/json": {
-                    "example": recommendations_example,
-                },
-            },
-        },
-        401: {
-            "model": List[Error],
-            "content": {
-                "application/json": {
-                    "examples": unauthorized_examples,
-                },
-            },
-        },
-        404: {
-            "model": List[Error],
-            "content": {
-                "application/json": {
-                    "examples": not_found_examples,
-                },
-            },
-        },
+        200: recommendations_response,
+        401: unauthorized_response,
+        404: not_found_response,
     },
 )
 async def get_reco(

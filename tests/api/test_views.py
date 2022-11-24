@@ -26,8 +26,7 @@ def test_get_reco_success(
     path = GET_RECO_PATH.format(model_name="test_model", user_id=user_id)
     with client:
         response = client.get(
-            path,
-            headers={"Authorization": service_config.api_key},
+            path, headers={"Authorization": service_config.api_key},
         )
     assert response.status_code == HTTPStatus.OK
     response_json = response.json()
