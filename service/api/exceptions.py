@@ -42,7 +42,7 @@ class WrongModelNameError(AppException):
 class MissingApiKey(AppException):
     def __init__(
         self,
-        status_code: int = HTTPStatus.NOT_FOUND,
+        status_code: int = HTTPStatus.UNAUTHORIZED,
         error_key: str = "missing_api_key",
         error_message: str = "Missing header with api key",
         error_loc: tp.Optional[tp.Sequence[str]] = None,
@@ -53,7 +53,7 @@ class MissingApiKey(AppException):
 class InvalidApiKey(AppException):
     def __init__(
         self,
-        status_code: int = HTTPStatus.NOT_FOUND,
+        status_code: int = HTTPStatus.UNAUTHORIZED,
         error_key: str = "invalid_api_key",
         error_message: str = "Invalid api key",
         error_loc: tp.Optional[tp.Sequence[str]] = None,
