@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 from pydantic import BaseSettings
 
 
@@ -29,6 +31,7 @@ class ServiceConfig(Config):
     log_config: LogConfig
 
 
+@lru_cache
 def get_config() -> ServiceConfig:
     return ServiceConfig(
         log_config=LogConfig(),
