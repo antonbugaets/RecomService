@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 from pydantic import BaseSettings
 
 
@@ -5,6 +7,7 @@ class Config(BaseSettings):
 
     class Config:
         case_sensitive = False
+        env_file = ".env"
 
 
 class LogConfig(Config):
@@ -23,10 +26,12 @@ class LogConfig(Config):
 class ServiceConfig(Config):
     service_name: str = "reco_service"
     k_recs: int = 10
+    api_key: str
 
     log_config: LogConfig
 
 
+@lru_cache
 def get_config() -> ServiceConfig:
     return ServiceConfig(
         log_config=LogConfig(),

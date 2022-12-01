@@ -26,3 +26,36 @@ class UserNotFoundError(AppException):
         error_loc: tp.Optional[tp.Sequence[str]] = None,
     ):
         super().__init__(status_code, error_key, error_message, error_loc)
+
+
+class WrongModelNameError(AppException):
+    def __init__(
+        self,
+        status_code: int = HTTPStatus.NOT_FOUND,
+        error_key: str = "wrong_model_name",
+        error_message: str = "Wrong model name",
+        error_loc: tp.Optional[tp.Sequence[str]] = None,
+    ):
+        super().__init__(status_code, error_key, error_message, error_loc)
+
+
+class MissingApiKey(AppException):
+    def __init__(
+        self,
+        status_code: int = HTTPStatus.UNAUTHORIZED,
+        error_key: str = "missing_api_key",
+        error_message: str = "Missing header with api key",
+        error_loc: tp.Optional[tp.Sequence[str]] = None,
+    ):
+        super().__init__(status_code, error_key, error_message, error_loc)
+
+
+class InvalidApiKey(AppException):
+    def __init__(
+        self,
+        status_code: int = HTTPStatus.UNAUTHORIZED,
+        error_key: str = "invalid_api_key",
+        error_message: str = "Invalid api key",
+        error_loc: tp.Optional[tp.Sequence[str]] = None,
+    ):
+        super().__init__(status_code, error_key, error_message, error_loc)
