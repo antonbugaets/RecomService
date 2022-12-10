@@ -1,3 +1,4 @@
+# pylint: disable=R0902
 import os
 import pickle
 from collections import Counter
