@@ -1,4 +1,5 @@
 from functools import lru_cache
+from typing import List
 
 from pydantic import BaseSettings
 
@@ -7,7 +8,7 @@ class Config(BaseSettings):
 
     class Config:
         case_sensitive = False
-        env_file = ".env", ".env.example"
+        env_file = ".env.example", ".env"
 
 
 class LogConfig(Config):
@@ -27,6 +28,8 @@ class ServiceConfig(Config):
     service_name: str = "reco_service"
     k_recs: int = 10
     api_key: str
+    model_dir: str = "models"
+    models_to_load: List[str] = ["user_knn"]
 
     log_config: LogConfig
 

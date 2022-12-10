@@ -1,4 +1,5 @@
 import asyncio
+import os
 from concurrent.futures.thread import ThreadPoolExecutor
 from typing import Any, Dict
 
@@ -6,6 +7,7 @@ import uvloop
 from fastapi import FastAPI
 
 from ..log import app_logger, setup_logging
+from ..model_zoo.user_knn import UserKnn
 from ..settings import ServiceConfig
 from .exception_handlers import add_exception_handlers
 from .middlewares import add_middlewares
@@ -35,6 +37,12 @@ def create_app(config: ServiceConfig) -> FastAPI:
 
     app = FastAPI(debug=False)
     app.state.k_recs = config.k_recs
+    app.state.models = {}
+    for model_name in config.models_to_load:
+        if model_name == 'user_knn':
+            app.state.models[model_name] = UserKnn.load(
+                os.path.join(config.model_dir, model_name),
+            )
 
     add_views(app)
     add_middlewares(app)
