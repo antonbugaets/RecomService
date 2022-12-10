@@ -15,6 +15,7 @@ Mapping = Dict[int, int]
 
 class UserKnn(object):
     """User KNN model."""
+
     attrs_to_save = [
         'user_knn',
         'k_users',
@@ -98,6 +99,9 @@ class UserKnn(object):
 
         Returns:
             List of item IDs.
+
+        Raises:
+            ValueError: If model not fitted.
         """
         if not self.is_fitted:
             raise ValueError(
@@ -114,7 +118,8 @@ class UserKnn(object):
                 {
                     self.user_column: similar_user_ids,
                     self.item_column: self._watched.loc[
-                        similar_user_ids].values,
+                        similar_user_ids
+                    ].values,
                     'score': scores,
                 },
             )
@@ -218,10 +223,9 @@ class UserKnn(object):
         interactions = interactions.groupby(self.item_column).filter(
             lambda x: len(x) >= self.cold_item_threshold,
         )
-        interactions = interactions.groupby(self.user_column).filter(
+        return interactions.groupby(self.user_column).filter(
             lambda x: len(x) >= self.cold_user_threshold,
         )
-        return interactions
 
     def _get_interaction_matrix(
         self, interactions: pd.DataFrame,
@@ -262,9 +266,6 @@ class UserKnn(object):
 
         Args:
             interactions: Dataset with interactions.
-
-        Returns:
-            Calculated IDF for each item.
         """
         item_idf = pd.DataFrame.from_dict(
             Counter(interactions[self.item_column].values),
