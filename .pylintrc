@@ -3,7 +3,7 @@
 # A comma-separated list of package or module names from where C extensions
 # may be loaded. Extensions are loading into the active Python interpreter
 # and may run arbitrary code.
-extension-pkg-whitelist=orjson,
+extension-pkg-whitelist=orjson,nmslib,
 
 # Add files or directories to the blacklist.
 # They should be base names, not paths.
@@ -148,6 +148,7 @@ disable=print-statement,
         consider-using-with,
         no-name-in-module,
         duplicate-code,
+        useless-object-inheritance,
 
 
 

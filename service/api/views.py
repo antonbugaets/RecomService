@@ -143,8 +143,11 @@ async def get_reco(
         raise UserNotFoundError(error_message=f"User {user_id} not found")
 
     k_recs = request.app.state.k_recs
-    if model_name == 'test_model':
+    if model_name == "test_model":
         reco = list(range(k_recs))
+    elif model_name in request.app.state.models:
+        model = request.app.state.models[model_name]
+        reco = model.predict(user_id, k_recs=k_recs)
     else:
         raise WrongModelNameError(
             error_message=f"Wrong model name — '{model_name}'",
