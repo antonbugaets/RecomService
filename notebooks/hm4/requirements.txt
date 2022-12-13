@@ -1,0 +1,8 @@
+rectools==0.2.0
+numpy==1.23.4
+pandas==1.5.1
+implicit==0.4.4
+lightfm==1.16
+requests==2.25.1
+optuna==3.0.4
+nmslib==2.1.1
