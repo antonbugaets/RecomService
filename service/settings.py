@@ -29,7 +29,7 @@ class ServiceConfig(Config):
     k_recs: int = 10
     api_key: str
     model_dir: str = "models"
-    models_to_load: List[str] = ["fm_ann"]
+    models_to_load: List[str] = []
 
     log_config: LogConfig
 
